@@ -8,29 +8,67 @@
       .chart-item-0  {stroke: #dd0000}
       .chart-item-1  {stroke: #00cc00}
       .chart-item-2  {stroke: #0000ff}
+      .btn { margin-top: 1rem; }
+      .example {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin: 1rem;
+        padding: 0 1rem 1rem;
+        width: 140px;
+      }
     </style>
   </head>
   <body>
-    <div id="mychart">Chart: </div>
+    <div class="example">
+      <h2>Full Chart</h2>
+      <div id="full-chart"></div>
+      <button class="btn" id="update-full-chart">Update Full Chart</button>
+    </div>
+    <div class="example">
+      <h2>Partial Chart</h2>
+      <div id="partial-chart"></div>
+      <button class="btn" id="update-partial-chart">Update Partial Chart</button>
+    </div>
   </body>
   <script type="module">
     import { DonutChart } from './donut-chart.js';
-    const chart_div = document.getElementById("mychart")
-    const mychart = new DonutChart(chart_div, {
+    const chart_div = document.getElementById("full-chart");
+    const fullChart = new DonutChart(chart_div, {
         r: 60,
         stroke: 16,
         scale: 100,
         items: [
             { label: "A", value: .2 },
-            { label: "B", value: .1 },
+            { label: "B", value: .3 },
             { label: "C", value: .5 },
         ]
-    })
-    mychart.update({
+    });
+    document.getElementById("update-full-chart").addEventListener("click", () => {
+        fullChart.update({
+            items: [
+                { label: "J", value: .4 },
+                { label: "Q", value: .3 },
+            ]
+        });
+    });
+    const partialChart = new DonutChart(document.getElementById("partial-chart"), {
+        r: 60,
+        stroke: 16,
+        scale: 100,
+        rotate: false,
+        partial: true,
         items: [
-            { label: "J", value: .4 },
-            { label: "Q", value: .3 },
+            { label: "A", value: .2 },
+            { label: "B", value: .3 },
         ]
-    })
+    });
+    document.getElementById("update-partial-chart").addEventListener("click", () => {
+        partialChart.update({
+            items: [
+                { label: "J", value: .1 },
+                { label: "Q", value: .4 },
+            ]
+        });
+    });
   </script>
 </html>
