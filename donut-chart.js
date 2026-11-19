@@ -1,10 +1,25 @@
 export class DonutChart {
+	/* Transformation matrix (rotate and mirror) to correct orientation:
+	 * \[
+	 *   \left[
+	 *   \begin{array}{ccc}
+	 *      0 & -1 & 0 \\
+	 *     -1 &  0 & 0 \\
+	 *      0 &  0 & 1
+	 *   \end{array}
+	 *   \right]
+	 * \]
+	 */
+	static ROTATE_AND_MIRROR = "matrix(0 -1 -1 0 0 0)";
+
 	static defaultSpec = {
 		r: 60,
 		stroke: 16,
 		rotate: true,
 		mirror: true,
 		partial: false,
+		height: undefined,
+		width: undefined,
 		items: [],
 	};
 
@@ -78,26 +93,14 @@ export class DonutChart {
 		return root
 	}
 
-	/* Transformation matrix (rotate and mirror) to correct orientation:
-	 * \[
-	 *   \left[
-	 *   \begin{array}{ccc}
-	 *      0 & -1 & 0 \\
-	 *     -1 &  0 & 0 \\
-	 *      0 &  0 & 1
-	 *   \end{array}
-	 *   \right]
-	 * \]
-	 */
 	__gen_code(spec) {
-		const correct_orientation = "matrix(0 -1 -1 0 0 0)";
 		const attributes = {
 				class: "chart-donut",
-				width: spec.r * 2,
-				height: spec.r * 2,
+				width: spec.width ?? spec.r * 2,
+				height: spec.height ?? spec.r * 2,
 			};
 		if (this.spec.rotate && this.spec.mirror) {
-			attributes.transform = correct_orientation;
+			attributes.transform = DonutChart.ROTATE_AND_MIRROR;
 		}
 		else if (this.spec.mirror) {
 			attributes.transform = "scale(-1 1)";
