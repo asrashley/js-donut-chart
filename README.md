@@ -17,6 +17,10 @@ npm ci
 npm run build
 ```
 
+## Test
+
+Run `npm test` to execute the Vitest tests in a jsdom environment.
+
 The ESM build is available as `dist/donut-chart.js`. The UMD build is available as `dist/donut-chart.umd.cjs`. In a browser,
 it exposes `DonutChart` as `DonutChartLibrary.DonutChart`.
 
