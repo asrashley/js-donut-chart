@@ -22,6 +22,13 @@ type SvgElementDescription = [
 	children?: SvgElementDescription[],
 ];
 
+type SvgPathDescription = {
+	d: string;
+	class: string;
+	fill: string;
+	"stroke-width": number;
+};
+
 export class DonutChart {
 	static ROTATE_AND_MIRROR = "matrix(0 -1 -1 0 0 0)";
 
@@ -124,19 +131,53 @@ export class DonutChart {
 			width: spec.width ?? spec.r * 2,
 			height: spec.height ?? spec.r * 2,
 		};
-		if (this.spec.rotate && this.spec.mirror) {
+		if (spec.rotate && spec.mirror) {
 			attributes.transform = DonutChart.ROTATE_AND_MIRROR;
-		} else if (this.spec.mirror) {
+		} else if (spec.mirror) {
 			attributes.transform = "scale(-1 1)";
+		} else if (spec.rotate) {
+			attributes.transform = "rotate(-90)";
 		}
-		return this.__create_tag_tree(["svg", attributes, this.__gen_chart(spec)]) as SVGSVGElement;
+		return this.__create_tag_tree([
+			"svg", attributes,
+			this.__gen_chart(spec),
+		]) as SVGSVGElement;
 	}
 
 	update(spec: DonutChartOptions): void {
+		const before = this.spec.items?.length ?? 0;
 		this.spec = {
 			...this.spec,
 			...spec,
 		};
+
+		if (this.element) {
+			const paths = this.__gen_chart(this.spec);
+			const existingPaths = this.element.querySelectorAll("path");
+			if (
+				this.spec.items.length === before &&
+				existingPaths.length === paths.length &&
+				!["r", "width", "height", "rotate", "mirror"].some(key => key in spec)
+			) {
+				existingPaths.forEach((path, index) => {
+					const desc = paths[index]?.[1] as SvgPathDescription | undefined;
+					if (!desc) {
+						return;
+					}
+					path.setAttribute("d", desc.d);
+					if (path.getAttribute("class") !== desc.class) {
+						path.setAttribute("class", desc.class);
+					}
+					if (path.getAttribute("fill") !== desc.fill) {
+						path.setAttribute("fill", desc.fill);
+					}
+					if (path.getAttribute("stroke-width") !== String(desc["stroke-width"])) {
+						path.setAttribute("stroke-width", String(desc["stroke-width"]));
+					}
+				});
+				return;
+			}
+		}
 
 		if (this.element != undefined) {
 			this.element.remove();
