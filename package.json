@@ -1,0 +1,42 @@
+{
+  "name": "js-donut-chart",
+  "version": "0.0.4",
+  "description": "Lightweight Doughnut Chart Library",
+  "homepage": "https://github.com/asrashley/js-donut-chart#readme",
+  "bugs": {
+    "url": "https://github.com/asrashley/js-donut-chart/issues"
+  },
+  "keywords": [
+    "charting-library",
+    "donut-chart",
+    "doughnut-chart"
+  ],
+  "repository": "github:asrashley/js-donut-chart",
+  "author": "Ismael Luceno <ismael@linux.com>",
+  "contributors": [
+    "Alexis Ashley <github@ashley-family.net>"
+  ],
+  "type": "module",
+  "main": "./dist/donut-chart.umd.cjs",
+  "module": "./dist/donut-chart.js",
+  "types": "./dist/donut-chart.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/donut-chart.d.ts",
+      "import": "./dist/donut-chart.js",
+      "require": "./dist/donut-chart.umd.cjs"
+    }
+  },
+  "scripts": {
+    "build": "npm run typecheck && tsc --declaration --emitDeclarationOnly --outDir dist && rollup --config",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "rollup": "^4.0.0",
+    "rollup-plugin-esbuild": "^6.2.1",
+    "typescript": "^5.8.0"
+  }
+}
