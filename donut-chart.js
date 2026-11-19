@@ -1,4 +1,4 @@
-class DonutChart {
+export class DonutChart {
 	constructor(parent, spec) {
 		this.parent = parent
 		this.spec = spec

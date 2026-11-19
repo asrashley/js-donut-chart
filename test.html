@@ -1,5 +1,8 @@
-<html>
+<!doctype html>
+<html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       .chart-item-bg {stroke: #ddd}
       .chart-item-0  {stroke: #dd0000}
@@ -10,10 +13,10 @@
   <body>
     <div id="mychart">Chart: </div>
   </body>
-  <script type="text/javascript" src="donut-chart.js"></script>
-  <script type="text/javascript">
-    var chart_div = document.getElementById("mychart")
-    var mychart = new DonutChart(chart_div, {
+  <script type="module">
+    import { DonutChart } from './donut-chart.js';
+    const chart_div = document.getElementById("mychart")
+    const mychart = new DonutChart(chart_div, {
         r: 60,
         stroke: 16,
         scale: 100,
