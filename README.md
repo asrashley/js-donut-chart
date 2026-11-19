@@ -5,6 +5,36 @@ dependencies.
 
 It generates a SVG figure for the browser to render, and that's all it does.
 
+## Build
+
+The TypeScript source is in `src/donut-chart.ts`. Install the development
+dependencies and run `npm run build` to generate ESM and UMD builds,
+along with TypeScript declarations, in `dist/`.
+
+```sh
+nvm use  # optional - if not using nvm, install node.js
+npm ci
+npm run build
+```
+
+The ESM build is available as `dist/donut-chart.js`. The UMD build is available as `dist/donut-chart.umd.cjs`. In a browser,
+it exposes `DonutChart` as `DonutChartLibrary.DonutChart`.
+
+## Usage
+
+If using ESM modules:
+
+```javascript
+import { DonutChart } from './dist/donut-chart.js';
+```
+
+Is using `<script>` imports:
+
+```html
+<script type="text/javascript" src="./dist/donut-chart.umd.cjs"></script>
+<script>const { DonutChart } = DonutChartLibrary;</script>
+```
+
 The API is very simple. First you need to find an element to insert the graph on, e.g.:
 
 ```javascript
