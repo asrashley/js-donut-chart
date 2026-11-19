@@ -1,24 +1,36 @@
 export class DonutChart {
-	constructor(parent, spec) {
-		this.parent = parent
-		this.spec = spec
-		this.update({})
+	static defaultSpec = {
+		r: 60,
+		stroke: 16,
+		rotate: true,
+		mirror: true,
+		partial: false,
+		items: [],
+	};
+
+	constructor(parent, spec = {}) {
+		this.parent = parent;
+		this.spec = {
+			...DonutChart.defaultSpec,
+			...spec
+		};
+		this.update({});
 	}
 
-	__polar2xy(a, r) {
+	__polar2xy(a, radius) {
 		return {
-			x: Math.cos(a * 2 * Math.PI) * r,
-			y: -Math.sin(a * 2 * Math.PI) * r,
+			x: Math.cos(a * 2 * Math.PI) * radius,
+			y: -Math.sin(a * 2 * Math.PI) * radius,
 		}
 	}
 
-	__gen_arc_path(cx, cy, r, start, offset) {
-		var end = this.__polar2xy(start + offset, r)
-		start = this.__polar2xy(start, r)
+	__gen_arc_path(cx, cy, radius, start, offset) {
+		const startXy = this.__polar2xy(start, radius);
+		const endXy = this.__polar2xy(start + offset, radius);
 		return [
-			"M", cx + start.x, cy + start.y,
-			"A", r, r, 0, +(offset > .5), 0, cx + end.x, cy + end.y,
-		].join(" ")
+			"M", cx + startXy.x, cy + startXy.y,
+			"A", radius, radius, 0, +(offset > .5), 0, cx + endXy.x, cy + endXy.y,
+		].join(" ");
 	}
 
 	__gen_chart_item(out, c, r, prev, cur, i, stroke) {
@@ -31,15 +43,16 @@ export class DonutChart {
 	}
 
 	__gen_chart(chart) {
-		var prev = 0, out = []
+		let prev = 0;
+		const out = [];
 		// FIXME get radius and stroke-width from CSS
-		var c = chart.r, r = chart.r - chart.stroke / 2
-		for (var i in chart.items) {
-			var cur = chart.items[i]
+		const c = chart.r, r = chart.r - chart.stroke / 2;
+		for (const i in chart.items) {
+			const cur = chart.items[i]
 			this.__gen_chart_item(out, c, r, prev, cur.value, i, chart.stroke)
 			prev += cur.value
 		}
-		if (prev < 1) {
+		if (prev < 1 && !chart.partial) {
 			this.__gen_chart_item(out, c, r, prev, 1 - prev, "bg", chart.stroke)
 		}
 		return out
@@ -50,15 +63,15 @@ export class DonutChart {
 		var attr = elem[1]
 		// Set attributes
 		for (var i in attr) {
-			var a = document.createAttribute(i)
+			const a = document.createAttribute(i)
 			a.value = attr[i]
 			root.setAttributeNode(a)
 		}
 		// Create children nodes
 		if (elem.length > 2) {
-			var children = elem[2]
-			for (var i in children) {
-				var c = this.__create_tag_tree(children[i])
+			const children = elem[2]
+			for (const i in children) {
+				const c = this.__create_tag_tree(children[i])
 				root.appendChild(c)
 			}
 		}
@@ -77,27 +90,34 @@ export class DonutChart {
 	 * \]
 	 */
 	__gen_code(spec) {
-		var correct_orientation = "matrix(0 -1 -1 0 0 0)"
-		return this.__create_tag_tree(
-			["svg", {
-				transform: correct_orientation,
+		const correct_orientation = "matrix(0 -1 -1 0 0 0)";
+		const attributes = {
 				class: "chart-donut",
 				width: spec.r * 2,
 				height: spec.r * 2,
-			}, this.__gen_chart(spec)])
+			};
+		if (this.spec.rotate && this.spec.mirror) {
+			attributes.transform = correct_orientation;
+		}
+		else if (this.spec.mirror) {
+			attributes.transform = "scale(-1 1)";
+		}
+		return this.__create_tag_tree(
+			["svg", attributes, this.__gen_chart(spec)])
 	}
 
 	__is_dict(v) {
-		return v && typeof v === "object" && !(v instanceof Array)
+		return v && typeof v === "object" && !(Array.isArray(v))
 	}
 
 	update(spec) {
 		// Merge the new spec
-		for (var i in spec) {
-			this.spec[i] = spec[i]
+		this.spec = {
+			...this.spec,
+			...spec,
 		}
 
-		var code = this.__gen_code(this.spec)
+		const code = this.__gen_code(this.spec)
 		// TODO can we switch the elements in place?
 		if (this.element != undefined) {
 			this.element.remove()
