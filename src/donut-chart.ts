@@ -43,7 +43,7 @@ export class DonutChart {
 		items: [],
 	};
 
-	private parent: Element;
+	private parent: Element | null;
 	private spec: DonutChartSpec;
 	private element?: Element;
 
@@ -54,6 +54,22 @@ export class DonutChart {
 			...spec,
 		};
 		this.update({});
+	}
+
+	get parentElement(): Element | null {
+		return this.parent;
+	}
+
+	cleanup() {
+		if (this.element && this.parent) {
+			this.parent.removeChild(this.element);
+			this.element = undefined;
+		}
+	}
+
+	dispose() {
+		this.cleanup();
+		this.parent = null;
 	}
 
 	private __polar2xy(a: number, radius: number): { x: number; y: number } {
@@ -150,6 +166,10 @@ export class DonutChart {
 			...this.spec,
 			...spec,
 		};
+
+		if (!this.parent) {
+			throw new Error("chart has been disposed");
+		}
 
 		if (this.element) {
 			const paths = this.__gen_chart(this.spec);
