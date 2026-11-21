@@ -1,5 +1,6 @@
 export interface DonutChartItem {
 	label?: string;
+	className?: string;
 	value: number;
 }
 
@@ -100,12 +101,12 @@ export class DonutChart {
 		r: number,
 		prev: number,
 		cur: number,
-		index: number | "bg",
+		className: string,
 		stroke: number,
 	): void {
 		out.push(["path", {
 			d: this.__gen_arc_path(c, c, r, prev, cur),
-			class: "chart-item-" + index,
+			class: className,
 			fill: "transparent",
 			"stroke-width": stroke,
 		}]);
@@ -117,11 +118,12 @@ export class DonutChart {
 		// FIXME get radius and stroke-width from CSS
 		const c = chart.r, r = chart.r - chart.stroke / 2;
 		for (const [index, item] of chart.items.entries()) {
-			this.__gen_chart_item(out, c, r, prev, item.value, index, chart.stroke);
+			const className = item.className ?? `chart-item-${index}`;
+			this.__gen_chart_item(out, c, r, prev, item.value, className, chart.stroke);
 			prev += item.value;
 		}
 		if (prev < 1 && !chart.partial) {
-			this.__gen_chart_item(out, c, r, prev, 1 - prev, "bg", chart.stroke);
+			this.__gen_chart_item(out, c, r, prev, 1 - prev, "chart-item-bg", chart.stroke);
 		}
 		return out;
 	}

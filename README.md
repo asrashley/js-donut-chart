@@ -69,7 +69,15 @@ The following option are supported:
 | rotate  | boolean | (optional) if true, diagram starts at top, otherwise left horizontal axis
 | mirror  | boolean | (optional) mirror about the vertical axis
 | partial | boolean | (optional) if true and sum(values) < 1, an extra arc is added
-| items  | array  | data for the graph.
+| items   | array  | data for the graph.
+
+Each item in the `items` array has the following properties:
+
+| property  |  type  |description
+|-----------|--------|-----------
+| label     | string | (optional) name of this data item
+| value     | number | the value for this item - must be less than or equal to one
+| className | string | (optional) the CSS class name to use for this item
 
 The sum of all values in `items` must be less than or equal to 1. If the sum is less than one, `DonutChart` will automatically add an extra arc that completes the circle. If the `partial` property is present and set to `false`, this additional arc will not be generated.
 
